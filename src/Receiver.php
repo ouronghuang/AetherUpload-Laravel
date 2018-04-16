@@ -24,8 +24,8 @@ class Receiver
         $uploadPartialFile = $this->generateUploadPartialFilePath($uploadBaseName, $uploadExt);
         $uploadHead = $this->generateUploadHeadPath($uploadBaseName);
 
-        if ( ! (@touch($uploadPartialFile) && @touch($uploadHead)) ) {
-            return trans('aetherupload::messages.create_file_fail');
+        if (!(@touch($uploadPartialFile) && @touch($uploadHead))) {
+            return trans('aetherupload.create_file_fail');
         }
 
         return false;
@@ -37,27 +37,29 @@ class Receiver
     public function writeFile()
     {
         # 写入上传文件内容
-        if ( @file_put_contents($this->uploadPartialFile, @file_get_contents($this->file->getRealPath()), FILE_APPEND) === false ) {
-            return trans('aetherupload::messages.write_file_fail');
+        if (@file_put_contents($this->uploadPartialFile, @file_get_contents($this->file->getRealPath()), FILE_APPEND) === false) {
+            return trans('aetherupload.write_file_fail');
         }
         # 写入头文件内容
-        if ( @file_put_contents($this->uploadHead, $this->chunkIndex) === false ) {
-            return trans('aetherupload::messages.write_head_fail');
+        if (@file_put_contents($this->uploadHead, $this->chunkIndex) === false) {
+            return trans('aetherupload.write_head_fail');
         }
 
         return false;
     }
 
-    public function renameTempFile()
+    public function renameTempFile($fileName = '')
     {
         $savedFileHash = $this->generateSavedFileHash($this->uploadPartialFile);
 
         if ( RedisHandler::hashExists($savedFileHash) ) {
             $this->savedPath = RedisHandler::getFilePathByHash($savedFileHash);
         } else {
-            $this->savedPath = ConfigMapper::get('FILE_DIR') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_SUB_DIR') . DIRECTORY_SEPARATOR . $savedFileHash . '.' . $this->uploadExt;
+            $fileName = $fileName ?: $savedFileHash . '.' . $this->uploadExt;
 
-            if ( ! @rename($this->uploadPartialFile, ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . $this->savedPath) ) {
+            $this->savedPath = ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_sub_dir') . DIRECTORY_SEPARATOR . $fileName;
+
+            if ( ! @rename($this->uploadPartialFile, ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . $this->savedPath) ) {
                 return false;
             }
         }
@@ -67,27 +69,27 @@ class Receiver
 
     public function generateUploadPartialFilePath($uploadBaseName, $uploadExt)
     {
-        return ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_DIR') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_SUB_DIR') . DIRECTORY_SEPARATOR . $uploadBaseName . '.' . $uploadExt . '.part';
+        return ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_sub_dir') . DIRECTORY_SEPARATOR . $uploadBaseName . '.' . $uploadExt . '.part';
     }
 
     public function getUploadPartialFilePath($subDir)
     {
-        return ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_DIR') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $this->uploadBaseName . '.' . $this->uploadExt . '.part';
+        return ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $this->uploadBaseName . '.' . $this->uploadExt . '.part';
     }
 
     public function generateUploadHeadPath($uploadBaseName)
     {
-        return ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . ConfigMapper::get('HEAD_DIR') . DIRECTORY_SEPARATOR . $uploadBaseName . '.head';
+        return ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('head_dir') . DIRECTORY_SEPARATOR . $uploadBaseName . '.head';
     }
 
     public function getUploadHeadPath()
     {
-        return ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . ConfigMapper::get('HEAD_DIR') . DIRECTORY_SEPARATOR . $this->uploadBaseName . '.head';
+        return ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('head_dir') . DIRECTORY_SEPARATOR . $this->uploadBaseName . '.head';
     }
 
     public function getUploadFileSubFolderPath()
     {
-        return ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_DIR') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_SUB_DIR');
+        return ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_sub_dir');
     }
 
     protected function generateSavedFileHash($filePath)
@@ -99,6 +101,4 @@ class Receiver
     {
         return time() . mt_rand(100, 999);
     }
-
-
 }

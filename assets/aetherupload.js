@@ -193,6 +193,8 @@ var AetherUpload = {
 
             form = new FormData();
 
+        form.append('file_name', _this.fileName);
+
         form.append("file", this.file.slice(start, end));
 
         form.append("upload_ext", this.uploadExt);

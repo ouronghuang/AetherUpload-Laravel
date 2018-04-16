@@ -12,7 +12,7 @@ class Responser
 
     public static function reportError($message, $deleteFiles = false, $uploadHead = '', $uploadPartialFile = '')
     {
-        if ( $deleteFiles ) {
+        if ($deleteFiles) {
             @unlink($uploadHead);
             @unlink($uploadPartialFile);
         }

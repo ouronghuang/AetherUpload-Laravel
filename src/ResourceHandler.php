@@ -8,8 +8,18 @@ class ResourceHandler extends \Illuminate\Routing\Controller
     public function __construct()
     {
         ConfigMapper::getInstance()->applyGroupConfig(request()->route('group'));
-        $this->middleware(ConfigMapper::get('MIDDLEWARE_DISPLAY'))->only('displayResource');
-        $this->middleware(ConfigMapper::get('MIDDLEWARE_DOWNLOAD'))->only('downloadResource');
+
+        $displayResource = ConfigMapper::get('middleware_display');
+
+        if (count($displayResource)) {
+            $this->middleware(ConfigMapper::get('middleware_display'))->only('displayResource');
+        }
+
+        $downloadResource = ConfigMapper::get('middleware_download');
+
+        if (count($downloadResource)) {
+            $this->middleware(ConfigMapper::get('middleware_download'))->only('downloadResource');
+        }
     }
 
     /**
@@ -21,9 +31,9 @@ class ResourceHandler extends \Illuminate\Routing\Controller
      */
     public function displayResource($group, $subDir, $resourceName)
     {
-        $uploadedFile = ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_DIR') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $resourceName;
+        $uploadedFile = ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $resourceName;
 
-        if ( ! is_file($uploadedFile) ) {
+        if (!is_file($uploadedFile)) {
             abort(404);
         }
 
@@ -40,11 +50,11 @@ class ResourceHandler extends \Illuminate\Routing\Controller
      */
     public function downloadResource($group, $subDir, $resourceName, $newName)
     {
-        $uploadedFile = ConfigMapper::get('UPLOAD_PATH') . DIRECTORY_SEPARATOR . ConfigMapper::get('FILE_DIR') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $resourceName;
+        $uploadedFile = ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $resourceName;
 
         $ext = pathinfo($uploadedFile, PATHINFO_EXTENSION);
 
-        if ( ! is_file($uploadedFile) ) {
+        if (!is_file($uploadedFile)) {
             abort(404);
         }
 
@@ -71,44 +81,44 @@ class ResourceHandler extends \Illuminate\Routing\Controller
         $headDir = config('aetherupload.HEAD_DIR');
         $headFileNames = scandir($uploadPath . DIRECTORY_SEPARATOR . $headDir);
 
-        foreach ( $headFileNames as $headFileName ) {
+        foreach ($headFileNames as $headFileName) {
             $headFile = $uploadPath . DIRECTORY_SEPARATOR . $headDir . DIRECTORY_SEPARATOR . $headFileName;
 
-            if ( pathinfo($headFile, PATHINFO_EXTENSION) != 'head' ) {
+            if (pathinfo($headFile, PATHINFO_EXTENSION) != 'head') {
                 continue;
             }
 
             $createTime = substr(pathinfo($headFile, PATHINFO_BASENAME), 0, 10);
 
-            if ( $createTime < $dueTime ) {
+            if ($createTime < $dueTime) {
                 @unlink($headFile);
             }
         }
 
         $groupNames = array_keys(config('aetherupload.GROUPS'));
 
-        foreach ( $groupNames as $groupName ) {
+        foreach ($groupNames as $groupName) {
             $subDirNames = scandir($uploadPath . DIRECTORY_SEPARATOR . $groupName);
 
-            foreach ( $subDirNames as $subDirName ) {
+            foreach ($subDirNames as $subDirName) {
                 $subDir = $uploadPath . DIRECTORY_SEPARATOR . $groupName . DIRECTORY_SEPARATOR . $subDirName;
 
-                if ( $subDirName === '.' || $subDirName === '..' || ! is_dir($subDir) ) {
+                if ($subDirName === '.' || $subDirName === '..' || !is_dir($subDir)) {
                     continue;
                 }
 
                 $fileNames = scandir($subDir);
 
-                foreach ( $fileNames as $fileName ) {
+                foreach ($fileNames as $fileName) {
                     $uploadedFile = $subDir . DIRECTORY_SEPARATOR . $fileName;
 
-                    if ( $fileName === '.' || $fileName === '..' || pathinfo($uploadedFile, PATHINFO_EXTENSION) != 'part' ) {
+                    if ($fileName === '.' || $fileName === '..' || pathinfo($uploadedFile, PATHINFO_EXTENSION) != 'part') {
                         continue;
                     }
 
                     $createTime = substr(pathinfo($uploadedFile, PATHINFO_BASENAME), 0, 10);
 
-                    if ( $createTime < $dueTime ) {
+                    if ($createTime < $dueTime) {
                         @unlink($uploadedFile);
                     }
                 }

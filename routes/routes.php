@@ -1,14 +1,11 @@
 <?php
 
-if ( Config::get('aetherupload.ENABLE_EXAMPLE_PAGE') === true ) {
-
+if (Config::get('aetherupload.enable_example_page') === true) {
     Route::get('aetherupload', function () {
-
         return view('aetherupload::example');
     });
 
     Route::post('aetherupload', function () {
-
         echo '表单提交的数据(由脚本在上传完成后自动填入)：';
         echo '<pre>';
         print_r(request()->all());
@@ -25,7 +22,6 @@ if ( Config::get('aetherupload.ENABLE_EXAMPLE_PAGE') === true ) {
     });
 
     Route::get('aetherupload/example_source', function () {
-
         return '<html><body style="background:#222;color:#bbb;"><pre>' . htmlspecialchars(File::get(__DIR__ . '/../views/example.blade.php')) . '</pre></body></html>';
     });
 }
@@ -37,4 +33,3 @@ Route::post('aetherupload/uploading', '\AetherUpload\UploadHandler@saveChunk');
 Route::get('aetherupload/display/{group}/{subDir}/{resourceName}', '\AetherUpload\ResourceHandler@displayResource');
 
 Route::get('aetherupload/download/{group}/{subDir}/{resourceName}/{newName}', '\AetherUpload\ResourceHandler@downloadResource');
-

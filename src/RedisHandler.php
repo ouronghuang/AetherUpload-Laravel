@@ -15,10 +15,10 @@ class RedisHandler
     {
         $result = false;
 
-        if ( class_exists('\Predis\Connection\ConnectionException') ) {
+        if (class_exists('\Predis\Connection\ConnectionException')) {
             try {
-                $result = Redis::hexists(config('aetherupload.REDIS_KEY'), $fileHash);
-            } catch ( ConnectionException $e ) {
+                $result = Redis::hexists(config('aetherupload.redis_key'), $fileHash);
+            } catch (ConnectionException $e) {
 
             }
         }
@@ -32,12 +32,12 @@ class RedisHandler
      */
     public static function getFilePathByHash($fileHash)
     {
-        $filePath = "";
+        $filePath = '';
 
-        if ( class_exists('\Predis\Connection\ConnectionException') ) {
+        if (class_exists('\Predis\Connection\ConnectionException')) {
             try {
-                $filePath = Redis::hget(config('aetherupload.REDIS_KEY'), $fileHash);
-            } catch ( ConnectionException $e ) {
+                $filePath = Redis::hget(config('aetherupload.redis_key'), $fileHash);
+            } catch (ConnectionException $e) {
 
             }
         }
@@ -55,10 +55,10 @@ class RedisHandler
     {
         $result = false;
 
-        if(class_exists('\Predis\Connection\ConnectionException')) {
+        if (class_exists('\Predis\Connection\ConnectionException')) {
             try {
-                $result = Redis::hset(config('aetherupload.REDIS_KEY'), $fileHash, $savedPath);
-            } catch ( ConnectionException $e ) {
+                $result = Redis::hset(config('aetherupload.redis_key'), $fileHash, $savedPath);
+            } catch (ConnectionException $e) {
 
             }
         }
@@ -73,24 +73,24 @@ class RedisHandler
     {
         self::deleteAllHashes();
 
-        $groupNames = array_keys(config('aetherupload.GROUPS'));
-        $uploadPath = config('aetherupload.UPLOAD_PATH');
+        $groupNames = array_keys(config('aetherupload.groups'));
+        $uploadPath = config('aetherupload.upload_path');
 
-        foreach ( $groupNames as $groupName ) {
+        foreach ($groupNames as $groupName) {
             $subDirNames = scandir($uploadPath . DIRECTORY_SEPARATOR . $groupName);
 
-            foreach ( $subDirNames as $subDirName ) {
+            foreach ($subDirNames as $subDirName) {
                 $subDir = $uploadPath . DIRECTORY_SEPARATOR . $groupName . DIRECTORY_SEPARATOR . $subDirName;
-                if ( $subDirName === '.' || $subDirName === '..' || ! is_dir($subDir) ) {
+                if ($subDirName === '.' || $subDirName === '..' || !is_dir($subDir)) {
                     continue;
                 }
 
                 $fileNames = scandir($subDir);
 
-                foreach ( $fileNames as $fileName ) {
+                foreach ($fileNames as $fileName) {
                     $savedFile = $subDir . DIRECTORY_SEPARATOR . $fileName;
 
-                    if ( $fileName === '.' || $fileName === '..' || pathinfo($savedFile, PATHINFO_EXTENSION) === 'part' ) {
+                    if ($fileName === '.' || $fileName === '..' || pathinfo($savedFile, PATHINFO_EXTENSION) === 'part') {
                         continue;
                     }
 
@@ -110,10 +110,10 @@ class RedisHandler
     {
         $result = false;
 
-        if(class_exists('\Predis\Connection\ConnectionException')) {
+        if (class_exists('\Predis\Connection\ConnectionException')) {
             try {
-                $result = Redis::hdel(config('aetherupload.REDIS_KEY'), $fileHash);
-            } catch ( ConnectionException $e ) {
+                $result = Redis::hdel(config('aetherupload.redis_key'), $fileHash);
+            } catch (ConnectionException $e) {
 
             }
         }
@@ -125,16 +125,14 @@ class RedisHandler
     {
         $result = false;
 
-        if(class_exists('\Predis\Connection\ConnectionException')) {
+        if (class_exists('\Predis\Connection\ConnectionException')) {
             try {
-                $result = Redis::del(config('aetherupload.REDIS_KEY'));
-            } catch ( ConnectionException $e ) {
+                $result = Redis::del(config('aetherupload.redis_key'));
+            } catch (ConnectionException $e) {
 
             }
         }
 
         return $result;
     }
-
-
 }

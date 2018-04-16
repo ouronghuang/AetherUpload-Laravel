@@ -5,19 +5,19 @@ namespace AetherUpload;
 class ConfigMapper
 {
     private static $_instance = null;
-    private $UPLOAD_PATH;
-    private $FILE_DIR;
-    private $FILE_SUB_DIR;
-    private $HEAD_DIR;
-    private $CHUNK_SIZE;
-    private $FILE_MAXSIZE;
-    private $FILE_EXTENSIONS;
-    private $MIDDLEWARE_PREPROCESS;
-    private $MIDDLEWARE_SAVE_CHUNK;
-    private $MIDDLEWARE_DISPLAY;
-    private $MIDDLEWARE_DOWNLOAD;
-    private $EVENT_BEFORE_UPLOAD_COMPLETE;
-    private $EVENT_UPLOAD_COMPLETE;
+    private $upload_path;
+    private $file_dir;
+    private $file_sub_dir;
+    private $head_dir;
+    private $chunk_size;
+    private $file_maxsize;
+    private $file_extensions;
+    private $middleware_preprocess;
+    private $middleware_save_chunk;
+    private $middleware_display;
+    private $middleware_download;
+    private $event_before_upload_complete;
+    private $event_upload_complete;
 
     private function __construct()
     {
@@ -26,7 +26,7 @@ class ConfigMapper
 
     public static function getInstance()
     {
-        if ( self::$_instance === null ) {
+        if (self::$_instance === null) {
             self::$_instance = (new self())->applyCommonConfig();
         }
 
@@ -35,25 +35,25 @@ class ConfigMapper
 
     private function applyCommonConfig()
     {
-        $this->UPLOAD_PATH = config('aetherupload.UPLOAD_PATH');
-        $this->CHUNK_SIZE = config('aetherupload.CHUNK_SIZE');
-        $this->HEAD_DIR = config('aetherupload.HEAD_DIR');
-        $this->FILE_SUB_DIR = config('aetherupload.FILE_SUB_DIR');
+        $this->upload_path = $this->getConfig('upload_path');
+        $this->chunk_size = $this->getConfig('chunk_size');
+        $this->head_dir = $this->getConfig('head_dir');
+        $this->file_sub_dir = $this->getConfig('file_sub_dir');
 
         return $this;
     }
 
     public function applyGroupConfig($group)
     {
-        $this->FILE_DIR = $group;
-        $this->FILE_MAXSIZE = config('aetherupload.GROUPS.' . $group . '.FILE_MAXSIZE');
-        $this->FILE_EXTENSIONS = config('aetherupload.GROUPS.' . $group . '.FILE_EXTENSIONS');
-        $this->MIDDLEWARE_PREPROCESS = config('aetherupload.GROUPS.' . $group . '.MIDDLEWARE_PREPROCESS');
-        $this->MIDDLEWARE_SAVE_CHUNK = config('aetherupload.GROUPS.' . $group . '.MIDDLEWARE_SAVE_CHUNK');
-        $this->MIDDLEWARE_DISPLAY = config('aetherupload.GROUPS.' . $group . '.MIDDLEWARE_DISPLAY');
-        $this->MIDDLEWARE_DOWNLOAD = config('aetherupload.GROUPS.' . $group . '.MIDDLEWARE_DOWNLOAD');
-        $this->EVENT_BEFORE_UPLOAD_COMPLETE = config('aetherupload.GROUPS.' . $group . '.EVENT_BEFORE_UPLOAD_COMPLETE');
-        $this->EVENT_UPLOAD_COMPLETE = config('aetherupload.GROUPS.' . $group . '.EVENT_UPLOAD_COMPLETE');
+        $this->file_dir = $group;
+        $this->file_maxsize = $this->getGroupConfig('file_maxsize');
+        $this->file_extensions = $this->getGroupConfig('file_extensions');
+        $this->middleware_preprocess = $this->getGroupConfig('middleware_preprocess');
+        $this->middleware_save_chunk = $this->getGroupConfig('middleware_save_chunk');
+        $this->middleware_display = $this->getGroupConfig('middleware_display');
+        $this->middleware_download = $this->getGroupConfig('middleware_download');
+        $this->event_before_upload_complete = $this->getGroupConfig('event_before_upload_complete');
+        $this->event_upload_complete = $this->getGroupConfig('event_upload_complete');
 
         return $this;
     }
@@ -63,4 +63,13 @@ class ConfigMapper
         return self::getInstance()->{$property};
     }
 
+    protected function getConfig($key)
+    {
+        return config("aetherupload.{$key}");
+    }
+
+    protected function getGroupConfig($key)
+    {
+        return config("aetherupload.groups.{$this->file_dir}.{$key}");
+    }
 }
