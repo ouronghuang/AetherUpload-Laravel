@@ -1,19 +1,18 @@
 {
     "name": "orh/laravel-upload",
-    "description": "Upload large files for Laravel 上传 大文件 laravel包",
+    "description": "Upload large files for laravel, Laravel 大文件上传包",
     "keywords": [
         "大文件",
-        "large",
-        "big",
-            "composer require orh/laravel-upload:dev-master"
+        "large file",
+        "上传",
+        "upload",
+        "laravel"
     ],
     "license": "GPL-2.0",
     "authors": [
         {
-            "name": "Payne Hu",
-            "email": "huyang110yahoo@gmail.com",
-            "homepage": "http://www.2ndrenais.com",
-            "role": "Manager"
+            "name": "orh",
+            "email": "512574561@qq.com"
         }
     ],
     "require": {
@@ -33,6 +32,5 @@
                 "AetherUpload\\AetherUploadServiceProvider"
             ]
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
