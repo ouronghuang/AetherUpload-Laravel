@@ -7,10 +7,10 @@ return [
     |--------------------------------------------------------------------------
     |
     | 访问地址：{host}/aetherupload
-    | 默认：true【true：开启，false：关闭】
+    | true：开启，false：关闭
     |
     */
-    'enable_example_page' => true,
+    'enable_example_page' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
