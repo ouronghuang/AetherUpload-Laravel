@@ -86,26 +86,24 @@ class AetherUploadServiceProvider extends ServiceProvider
      */
     protected function offerPublishing()
     {
-        /*$publishes = [
+        $publishes = [
             // 配置文件
-            __DIR__ . '/../config/aetherupload.php' => config_path('aetherupload.php'),
+            __DIR__ . '/../config/aetherupload.php' => config_path('aetherupload.php')
+        ];
 
+        $this->publishes($publishes, 'aetherupload-config');
+
+        $publishes = [
             // 前端资源文件
             __DIR__ . '/../assets/aetherupload.js' => public_path('js/aetherupload.js'),
             __DIR__ . '/../assets/spark-md5.min.js' => public_path('js/spark-md5.min.js'),
 
             // 默认文件夹
-            __DIR__ . '/../uploads/aetherupload_file' => config('aetherupload.upload_path') . '/file',
             __DIR__ . '/../uploads/aetherupload_head' => config('aetherupload.upload_path') . '/_head',
 
             // 语言文件
             __DIR__ . '/../translations/zh-CN/aetherupload.php' => base_path('resources/lang/zh-CN/aetherupload.php'),
             __DIR__ . '/../translations/en/aetherupload.php' => base_path('resources/lang/en/aetherupload.php'),
-        ];*/
-
-        $publishes = [
-            // 配置文件
-            __DIR__ . '/../config/aetherupload.php' => config_path('aetherupload.php')
         ];
 
         $this->publishes($publishes, 'aetherupload');

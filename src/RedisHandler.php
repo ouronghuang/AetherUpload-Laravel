@@ -77,10 +77,10 @@ class RedisHandler
         $uploadPath = config('aetherupload.upload_path');
 
         foreach ($groupNames as $groupName) {
-            $subDirNames = scandir($uploadPath . DIRECTORY_SEPARATOR . $groupName);
+            $subDirNames = scandir($uploadPath . '/' . $groupName);
 
             foreach ($subDirNames as $subDirName) {
-                $subDir = $uploadPath . DIRECTORY_SEPARATOR . $groupName . DIRECTORY_SEPARATOR . $subDirName;
+                $subDir = $uploadPath . '/' . $groupName . '/' . $subDirName;
                 if ($subDirName === '.' || $subDirName === '..' || !is_dir($subDir)) {
                     continue;
                 }
@@ -88,13 +88,13 @@ class RedisHandler
                 $fileNames = scandir($subDir);
 
                 foreach ($fileNames as $fileName) {
-                    $savedFile = $subDir . DIRECTORY_SEPARATOR . $fileName;
+                    $savedFile = $subDir . '/' . $fileName;
 
                     if ($fileName === '.' || $fileName === '..' || pathinfo($savedFile, PATHINFO_EXTENSION) === 'part') {
                         continue;
                     }
 
-                    self::setOneHash(pathinfo($savedFile, PATHINFO_FILENAME), $groupName . DIRECTORY_SEPARATOR . $subDirName . DIRECTORY_SEPARATOR . $fileName);
+                    self::setOneHash(pathinfo($savedFile, PATHINFO_FILENAME), $groupName . '/' . $subDirName . '/' . $fileName);
 
                 }
             }

@@ -31,7 +31,7 @@ class ResourceHandler extends \Illuminate\Routing\Controller
      */
     public function displayResource($group, $subDir, $resourceName)
     {
-        $uploadedFile = ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $resourceName;
+        $uploadedFile = ConfigMapper::get('upload_path') . '/' . ConfigMapper::get('file_dir') . '/' . $subDir . '/' . $resourceName;
 
         if (!is_file($uploadedFile)) {
             abort(404);
@@ -50,7 +50,7 @@ class ResourceHandler extends \Illuminate\Routing\Controller
      */
     public function downloadResource($group, $subDir, $resourceName, $newName)
     {
-        $uploadedFile = ConfigMapper::get('upload_path') . DIRECTORY_SEPARATOR . ConfigMapper::get('file_dir') . DIRECTORY_SEPARATOR . $subDir . DIRECTORY_SEPARATOR . $resourceName;
+        $uploadedFile = ConfigMapper::get('upload_path') . '/' . ConfigMapper::get('file_dir') . '/' . $subDir . '/' . $resourceName;
 
         $ext = pathinfo($uploadedFile, PATHINFO_EXTENSION);
 
@@ -68,7 +68,7 @@ class ResourceHandler extends \Illuminate\Routing\Controller
      */
     public static function getResourcePath($savedPath)
     {
-        return config('aetherupload.UPLOAD_PATH') . DIRECTORY_SEPARATOR . $savedPath;
+        return config('aetherupload.UPLOAD_PATH') . '/' . $savedPath;
     }
 
     /**
@@ -79,10 +79,10 @@ class ResourceHandler extends \Illuminate\Routing\Controller
         $dueTime = strtotime('-2 day');
         $uploadPath = config('aetherupload.UPLOAD_PATH');
         $headDir = config('aetherupload.HEAD_DIR');
-        $headFileNames = scandir($uploadPath . DIRECTORY_SEPARATOR . $headDir);
+        $headFileNames = scandir($uploadPath . '/' . $headDir);
 
         foreach ($headFileNames as $headFileName) {
-            $headFile = $uploadPath . DIRECTORY_SEPARATOR . $headDir . DIRECTORY_SEPARATOR . $headFileName;
+            $headFile = $uploadPath . '/' . $headDir . '/' . $headFileName;
 
             if (pathinfo($headFile, PATHINFO_EXTENSION) != 'head') {
                 continue;
@@ -98,10 +98,10 @@ class ResourceHandler extends \Illuminate\Routing\Controller
         $groupNames = array_keys(config('aetherupload.GROUPS'));
 
         foreach ($groupNames as $groupName) {
-            $subDirNames = scandir($uploadPath . DIRECTORY_SEPARATOR . $groupName);
+            $subDirNames = scandir($uploadPath . '/' . $groupName);
 
             foreach ($subDirNames as $subDirName) {
-                $subDir = $uploadPath . DIRECTORY_SEPARATOR . $groupName . DIRECTORY_SEPARATOR . $subDirName;
+                $subDir = $uploadPath . '/' . $groupName . '/' . $subDirName;
 
                 if ($subDirName === '.' || $subDirName === '..' || !is_dir($subDir)) {
                     continue;
@@ -110,7 +110,7 @@ class ResourceHandler extends \Illuminate\Routing\Controller
                 $fileNames = scandir($subDir);
 
                 foreach ($fileNames as $fileName) {
-                    $uploadedFile = $subDir . DIRECTORY_SEPARATOR . $fileName;
+                    $uploadedFile = $subDir . '/' . $fileName;
 
                     if ($fileName === '.' || $fileName === '..' || pathinfo($uploadedFile, PATHINFO_EXTENSION) != 'part') {
                         continue;
